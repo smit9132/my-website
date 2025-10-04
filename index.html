@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Navigation System</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #F7F9FC;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      padding: 28px;
+      margin-bottom: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 30px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, rgba(138, 43, 226, 0.2) 0%, transparent 70%);
+      z-index: -1;
+    }
+    
+    .header h1 {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #45B7D1, #96CEB4, #FFEAA7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      letter-spacing: 1px;
+    }
+    
+    .header p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.3rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    
+    @media (max-width: 768px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .control-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .control-group label {
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #F7F9FC;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+    
+    .control-group label i {
+      color: #FF6B6B;
+      font-size: 1.3rem;
+    }
+    
+    .control-group select {
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.3);
+      font-size: 1.1rem;
+      color: white;
+      transition: all 0.3s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .control-group select:focus {
+      outline: none;
+      border-color: #FF6B6B;
+      box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.3);
+    }
+    
+    .control-group select option {
+      background: #2D3748;
+      color: white;
+    }
+    
+    .path-options {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .path-option {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    .path-option:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-3px);
+    }
+    
+    .path-option.active {
+      background: rgba(29, 209, 161, 0.2);
+      border-color: #1DD1A1;
+      box-shadow: 0 0 15px rgba(29, 209, 161, 0.3);
+    }
+    
+    .path-option h4 {
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+    
+    .path-option p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 16px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+      color: white;
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 107, 107, 0.5);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #F7F9FC;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-3px);
+    }
+    
+    .zoom-controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    
+    .zoom-controls .btn {
+      flex: 1;
+    }
+    
+    .map-section {
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 28px;
+      border-radius: 24px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 20px;
+    }
+    
+    #canvas {
+      display: block;
+      margin: 0 auto;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      cursor: grab;
+    }
+    
+    #canvas:active {
+      cursor: grabbing;
+    }
+    
+    .legend {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .legend h3 {
+      margin-bottom: 16px;
+      font-size: 1.2rem;
+      color: #F7F9FC;
+      text-align: center;
+    }
+    
+    .legend .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    
+    .legend .color {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .path-info {
+      background: linear-gradient(135deg, #1DD1A1, #1AAE88);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 6px 20px rgba(29, 209, 161, 0.4);
+      display: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .path-info.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .path-info h3 {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.3rem;
+    }
+    
+    .path-info p {
+      margin-bottom: 6px;
+      font-size: 1.1rem;
+    }
+    
+    .buildings-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    
+    .building-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+      transition: all 0.4s ease;
+      border-left: 5px solid;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .building-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      z-index: -1;
+    }
+    
+    .building-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+    }
+    
+    .building-card .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .building-card .color {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .building-card h3 {
+      font-size: 1.3rem;
+      color: #F7F9FC;
+    }
+    
+    .building-card .type {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    
+    .floating {
+      animation: floating 4s ease-in-out infinite;
+    }
+    
+    @keyframes floating {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    .glow {
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎓 Campus Navigation System</h1>
+      <p>Find the shortest path or scenic route between any two locations on campus</p>
+    </div>
+
+    <div class="glass-card">
+      <div class="controls">
+        <div class="control-group">
+          <label for="start"><i>📍</i> Starting Location:</label>
+          <select id="start">
+            <option value="">-- Select Start --</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="end"><i>🎯</i> Destination:</label>
+          <select id="end">
+            <option value="">-- Select Destination --</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="path-options">
+        <div class="path-option active" data-type="shortest">
+          <h4>Shortest Path</h4>
+          <p>Fastest route with minimum distance</p>
+        </div>
+        <div class="path-option" data-type="scenic">
+          <h4>Scenic Route</h4>
+          <p>Enjoyable path through gardens and recreational areas</p>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="findPath()">
+          <i>🔍</i> Find Path
+        </button>
+        <button class="btn btn-secondary" onclick="clearPath()">
+          <i>🗑️</i> Clear Path
+        </button>
+      </div>
+
+      <div class="zoom-controls">
+        <button class="btn btn-secondary" onclick="zoomIn()">
+          <i>➕</i> Zoom In
+        </button>
+        <button class="btn btn-secondary" onclick="zoomOut()">
+          <i>➖</i> Zoom Out
+        </button>
+        <button class="btn btn-secondary" onclick="resetZoom()">
+          <i>🔄</i> Reset View
+        </button>
+      </div>
+
+      <div id="pathInfo" class="path-info">
+        <h3><i>✅</i> Path Found!</h3>
+        <p id="routeInfo"></p>
+        <p id="distanceInfo"></p>
+        <p id="stepsInfo"></p>
+        <p id="pathTypeInfo"></p>
+      </div>
+    </div>
+
+    <div class="glass-card map-section">
+      <canvas id="canvas" width="900" height="600"></canvas>
+      <div class="legend">
+        <h3>Building Types</h3>
+        <div class="row"><span class="color" style="background:#4ECDC4"></span> Academic</div>
+        <div class="row"><span class="color" style="background:#FF9F1C"></span> Administrative</div>
+        <div class="row"><span class="color" style="background:#6A0572"></span> Facilities</div>
+        <div class="row"><span class="color" style="background:#FF6B6B"></span> Recreation</div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <h2 style="margin-bottom: 20px; color: white; font-size: 1.8rem;">Campus Buildings</h2>
+      <div class="buildings-list" id="buildingsList"></div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let scale = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let currentPath = null;
+    let currentPathType = 'shortest';
+    let isDragging = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    // Building data with direct color values (not CSS variables)
+    const buildings = {
+      'Library': { x: 180, y: 120, type: 'Academic', color: '#4ECDC4' },
+      'Main Hall': { x: 420, y: 90, type: 'Academic', color: '#4ECDC4' },
+      'Science Block': { x: 680, y: 130, type: 'Academic', color: '#4ECDC4' },
+      'Admin Office': { x: 120, y: 280, type: 'Administrative', color: '#FF9F1C' },
+      'Cafeteria': { x: 380, y: 270, type: 'Facilities', color: '#6A0572' },
+      'Lab Building': { x: 650, y: 290, type: 'Academic', color: '#4ECDC4' },
+      'Sports Complex': { x: 150, y: 430, type: 'Recreation', color: '#FF6B6B' },
+      'Auditorium': { x: 400, y: 420, type: 'Facilities', color: '#6A0572' },
+      'Hostel': { x: 670, y: 430, type: 'Facilities', color: '#6A0572' },
+      'Parking': { x: 130, y: 540, type: 'Facilities', color: '#6A0572' },
+      'Garden': { x: 420, y: 550, type: 'Recreation', color: '#FF6B6B' },
+      'Gate': { x: 680, y: 540, type: 'Administrative', color: '#FF9F1C' }
+    };
+
+    const connections = {
+      'Library': ['Main Hall', 'Admin Office'],
+      'Main Hall': ['Library', 'Science Block', 'Cafeteria'],
+      'Science Block': ['Main Hall', 'Lab Building'],
+      'Admin Office': ['Library', 'Cafeteria', 'Sports Complex'],
+      'Cafeteria': ['Main Hall', 'Admin Office', 'Lab Building', 'Auditorium'],
+      'Lab Building': ['Science Block', 'Cafeteria', 'Hostel'],
+      'Sports Complex': ['Admin Office', 'Auditorium', 'Parking'],
+      'Auditorium': ['Cafeteria', 'Sports Complex', 'Hostel', 'Garden'],
+      'Hostel': ['Lab Building', 'Auditorium', 'Gate'],
+      'Parking': ['Sports Complex', 'Garden'],
+      'Garden': ['Auditorium', 'Parking', 'Gate'],
+      'Gate': ['Hostel', 'Garden']
+    };
+
+    // Scenic preference scores (higher = more scenic)
+    const scenicScores = {
+      'Library': 2,
+      'Main Hall': 2,
+      'Science Block': 2,
+      'Admin Office': 1,
+      'Cafeteria': 3,
+      'Lab Building': 2,
+      'Sports Complex': 4,
+      'Auditorium': 3,
+      'Hostel': 2,
+      'Parking': 1,
+      'Garden': 5,
+      'Gate': 1
+    };
+
+    function initUI() {
+      const startSelect = document.getElementById('start');
+      const endSelect = document.getElementById('end');
+      const buildingsList = document.getElementById('buildingsList');
+
+      Object.keys(buildings).forEach(name => {
+        const opt1 = document.createElement('option');
+        opt1.value = name;
+        opt1.textContent = name;
+        startSelect.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = name;
+        opt2.textContent = name;
+        endSelect.appendChild(opt2);
+
+        const card = document.createElement('div');
+        card.className = 'building-card';
+        card.style.borderLeftColor = buildings[name].color;
+        card.innerHTML = `
+          <div class="row">
+            <span class="color" style="background:${buildings[name].color}"></span>
+            <h3>${name}</h3>
+          </div>
+          <div class="type">${buildings[name].type}</div>
+        `;
+        
+        // Add click event to building cards
+        card.addEventListener('click', () => {
+          if (!startSelect.value) {
+            startSelect.value = name;
+          } else if (!endSelect.value && startSelect.value !== name) {
+            endSelect.value = name;
+          }
+        });
+        
+        buildingsList.appendChild(card);
+      });
+
+      // Add path option selection
+      document.querySelectorAll('.path-option').forEach(option => {
+        option.addEventListener('click', function() {
+          document.querySelectorAll('.path-option').forEach(opt => {
+            opt.classList.remove('active');
+          });
+          this.classList.add('active');
+          currentPathType = this.getAttribute('data-type');
+        });
+      });
+    }
+
+    function drawMap() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+      ctx.scale(scale, scale);
+
+      // Draw organic pathways instead of straight lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = 3;
+      Object.entries(connections).forEach(([from, neighbors]) => {
+          // Defensive: skip if 'from' or 'neighbors' are missing or malformed
+          if (!from || !Array.isArray(neighbors) || !buildings[from]) return;
+          neighbors.forEach(to => {
+            if (!to || !buildings[to]) return; // skip missing target building
+            ctx.beginPath();
+            const fromX = buildings[from].x;
+            const fromY = buildings[from].y;
+            const toX = buildings[to].x;
+            const toY = buildings[to].y;
+          
+          // Create curved paths for more organic feel
+          ctx.moveTo(fromX, fromY);
+          const cp1x = fromX + (toX - fromX) / 3;
+          const cp1y = fromY + 20;
+          const cp2x = fromX + (toX - fromX) * 2/3;
+          const cp2y = toY - 20;
+          ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+          ctx.stroke();
+        });
+      });
+
+      // Draw path if exists
+      if (currentPath && currentPath.length > 1) {
+        // Different colors for different path types
+        const pathColor = currentPathType === 'shortest' ? '#FFD700' : '#4ECDC4';
+        
+        ctx.strokeStyle = pathColor;
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.shadowColor = pathColor;
+        ctx.shadowBlur = 15;
+        
+        ctx.beginPath();
+        ctx.moveTo(buildings[currentPath[0]].x, buildings[currentPath[0]].y);
+        for (let i = 1; i < currentPath.length; i++) {
+          const fromX = buildings[currentPath[i-1]].x;
+          const fromY = buildings[currentPath[i-1]].y;
+          const toX = buildings[currentPath[i]].x;
+          const toY = buildings[currentPath[i]].y;
+          
+          // Create curved path for the route
+          const cp1x = fromX + (toX - fromX) / 3;
+          const cp1y = fromY + 20;
+          const cp2x = fromX + (toX - fromX) * 2/3;
+          const cp2y = toY - 20;
+          ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, toX, toY);
+        }
+        ctx.stroke();
+        ctx.shadowColor = 'transparent';
+        
+        // Draw path nodes with animation
+        for (let i = 0; i < currentPath.length; i++) {
+          const name = currentPath[i];
+          const data = buildings[name];
+          
+          // Draw pulsing effect for path nodes
+          ctx.fillStyle = data.color;
+          ctx.beginPath();
+          ctx.arc(data.x, data.y, 20, 0, 2 * Math.PI);
+          ctx.fill();
+          
+          // Draw glowing outline for path nodes
+          ctx.strokeStyle = pathColor;
+          ctx.lineWidth = 4;
+          ctx.stroke();
+          
+          // Draw node number
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 14px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(i+1, data.x, data.y);
+        }
+      }
+
+      // Draw buildings not in path with creative shapes
+      Object.entries(buildings).forEach(([name, data]) => {
+        if (currentPath && currentPath.includes(name)) return;
+        
+        // Draw creative building shapes (circles with different effects)
+        ctx.fillStyle = data.color;
+        ctx.beginPath();
+        ctx.arc(data.x, data.y, 16, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Add creative glow effect
+        ctx.shadowColor = data.color;
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowColor = 'transparent';
+
+        // Draw building name with creative styling
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(name, data.x, data.y - 30);
+      });
+
+      ctx.restore();
+    }
+
+    function distance(a, b) {
+      const dx = buildings[a].x - buildings[b].x;
+      const dy = buildings[a].y - buildings[b].y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function dijkstra(start, end, useScenic = false) {
+      const dist = {};
+      const prev = {};
+      const unvisited = new Set(Object.keys(buildings));
+
+      Object.keys(buildings).forEach(node => {
+        dist[node] = Infinity;
+        prev[node] = null;
+      });
+      dist[start] = 0;
+
+      while (unvisited.size > 0) {
+        let current = null;
+        let minDist = Infinity;
+        unvisited.forEach(node => {
+          if (dist[node] < minDist) {
+            minDist = dist[node];
+            current = node;
+          }
+        });
+
+        if (current === null || current === end) break;
+        unvisited.delete(current);
+
+        // Defensive: if there are no connections listed for `current`, skip
+        if (!connections[current] || !Array.isArray(connections[current])) continue;
+
+        connections[current].forEach(neighbor => {
+          if (unvisited.has(neighbor)) {
+            // For scenic routes, we adjust the distance based on scenic score
+            let edgeWeight = distance(current, neighbor);
+            if (useScenic) {
+              // Lower weight for scenic locations (encourages path through them)
+              edgeWeight = edgeWeight * (1 - (scenicScores[neighbor] * 0.1));
+            }
+            
+            const alt = dist[current] + edgeWeight;
+            if (alt < dist[neighbor]) {
+              dist[neighbor] = alt;
+              prev[neighbor] = current;
+            }
+          }
+        });
+      }
+
+      const path = [];
+      let current = end;
+      while (current !== null) {
+        path.unshift(current);
+        current = prev[current];
+      }
+
+      return path[0] === start ? { path, distance: dist[end] } : null;
+    }
+
+    function findPath() {
+      const start = document.getElementById('start').value;
+      const end = document.getElementById('end').value;
+
+      if (!start || !end) {
+        alert('Please select both start and destination!');
+        return;
+      }
+
+      if (start === end) {
+        alert('Start and destination cannot be the same!');
+        return;
+      }
+
+      const useScenic = currentPathType === 'scenic';
+      const result = dijkstra(start, end, useScenic);
+      
+      if (result) {
+        currentPath = result.path;
+        const info = document.getElementById('pathInfo');
+        document.getElementById('routeInfo').textContent = `Route: ${result.path.join(' → ')}`;
+        document.getElementById('distanceInfo').textContent = `Distance: ${result.distance.toFixed(0)} units`;
+        document.getElementById('stepsInfo').textContent = `Steps: ${result.path.length - 1} buildings`;
+        document.getElementById('pathTypeInfo').textContent = `Path Type: ${useScenic ? 'Scenic Route' : 'Shortest Path'}`;
+        info.classList.add('show');
+        drawMap();
+      } else {
+        alert('No path found!');
+      }
+    }
+
+    function clearPath() {
+      currentPath = null;
+      document.getElementById('pathInfo').classList.remove('show');
+      document.getElementById('start').value = '';
+      document.getElementById('end').value = '';
+      drawMap();
+    }
+
+    function zoomIn() {
+      scale = Math.min(scale * 1.2, 3);
+      drawMap();
+    }
+
+    function zoomOut() {
+      scale = Math.max(scale / 1.2, 0.5);
+      drawMap();
+    }
+
+    function resetZoom() {
+      scale = 1;
+      offsetX = 0;
+      offsetY = 0;
+      drawMap();
+    }
+
+    // Add drag functionality for the canvas
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      canvas.style.cursor = 'grabbing';
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      
+      offsetX += dx;
+      offsetY += dy;
+      
+      lastX = e.clientX;
+      lastY = e.clientY;
+      
+      drawMap();
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      isDragging = false;
+      canvas.style.cursor = 'grab';
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      isDragging = false;
+      canvas.style.cursor = 'grab';
+    });
+
+    initUI();
+    drawMap();
+  </script>
+</body>
+</html>
