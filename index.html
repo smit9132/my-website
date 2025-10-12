@@ -67,6 +67,19 @@
       -webkit-text-fill-color: transparent;
       text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    
+    .header h1::before {
+      content: '🎓';
+      font-size: 3rem;
+      -webkit-text-fill-color: initial;
+      background: none;
+      text-shadow: none;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     }
     
     .header p {
@@ -419,7 +432,7 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>🎓 Campus Navigation System</h1>
+      <h1>Campus Navigation System</h1>
       <p>Find the shortest path or scenic route between any two locations on campus</p>
     </div>
 
@@ -803,7 +816,7 @@
         currentPath = result.path;
         const info = document.getElementById('pathInfo');
         document.getElementById('routeInfo').textContent = `Route: ${result.path.join(' → ')}`;
-        document.getElementById('distanceInfo').textContent = `Distance: ${result.distance.toFixed(0)} units`;
+        document.getElementById('distanceInfo').textContent = `Distance: ${result.distance.toFixed(0)} metres`;
         document.getElementById('stepsInfo').textContent = `Steps: ${result.path.length - 1} buildings`;
         document.getElementById('pathTypeInfo').textContent = `Path Type: ${useScenic ? 'Scenic Route' : 'Shortest Path'}`;
         info.classList.add('show');
